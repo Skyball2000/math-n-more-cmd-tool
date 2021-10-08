@@ -1,13 +1,11 @@
-package de.yanwittmann.math;
+package de.yanwittmann.cmdtool.math;
 
 import com.fathzer.soft.javaluator.AbstractEvaluator;
 import com.fathzer.soft.javaluator.BracketPair;
 import com.fathzer.soft.javaluator.Operator;
 import com.fathzer.soft.javaluator.Parameters;
-import de.yanwittmann.util.Util;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TreeBooleanEvaluator extends AbstractEvaluator<String> {
 
@@ -117,92 +115,7 @@ public class TreeBooleanEvaluator extends AbstractEvaluator<String> {
         return getValue(evaluator.evaluate(expression, variables));
     }
 
-    public static Set<String> extractVariables(String expression) {
-        expression = expression.replace(")", " ").replace("(", " ");
-        List<String> operands = PARAMETERS.getOperators().stream().map(Operator::getSymbol).collect(Collectors.toList());
-        operands.add("TRUE");
-        operands.add("FALSE");
-        operands.add("TT");
-        operands.add("FF");
-        for (int i = operands.size() - 1; i >= 0; i--) operands.add(operands.get(i).toLowerCase());
-        operands = Util.reverse(operands.stream().distinct().sorted(Comparator.comparing(String::length))).collect(Collectors.toList());
-        for (String operator : operands) {
-            if (operator.length() > 1) {
-                expression = expression.replace(operator, " ");
-            } else {
-                expression = expression.replaceAll(operator + "($| )", " ").replaceAll("(^| )" + operator, " ");
-            }
-        }
-        expression = expression.replaceAll("[^a-zA-Z0-9][01][^a-zA-Z0-9]", "");
-        return Arrays.stream(expression.split(" "))
-                .filter(v -> v.length() > 0)
-                .collect(Collectors.toSet());
-    }
-
-    /**
-     * <ol>
-     *     <li>Extract variables from expression</li>
-     *     <li>Iterate over all possible combinations</li>
-     *     <li>Evaluate the expression with the current variable context</li>
-     * </ol>
-     *
-     * @param expression The expression to create the truth table for.
-     * @return The table as a string.
-     */
-    public static String generateTruthTable(String expression) {
-        TreeBooleanEvaluator evaluator = new TreeBooleanEvaluator();
-        List<String> variables = extractVariables(expression).stream().sorted().collect(Collectors.toList());
-        int amountCombinations = (int) Math.pow(2, variables.size());
-        List<TruthTableEntry> truthTableEntries = new ArrayList<>();
-
-        for (int i = 0; i < amountCombinations; i++) {
-            final MyEvaluatorContext<String> evaluationContext = new MyEvaluatorContext<>();
-            List<String> inputs = Arrays.stream(String.format("%" + variables.size() + "s", Integer.toBinaryString(i)).replace(" ", "0").split("")).collect(Collectors.toList());
-            for (int j = 0; j < variables.size() && j < inputs.size(); j++) {
-                evaluationContext.set(variables.get(j), inputs.get(j));
-            }
-            truthTableEntries.add(new TruthTableEntry(evaluationContext, inputs));
-        }
-
-        truthTableEntries.forEach(e -> e.evaluate(evaluator, expression));
-        List<List<String>> tableList = new ArrayList<>();
-        List<String> tableHead = new ArrayList<>(variables);
-        tableHead.add("out");
-        tableList.add(tableHead);
-        for (TruthTableEntry entry : truthTableEntries) {
-            List<String> tableRow = new ArrayList<>(entry.getInputs());
-            tableRow.add(entry.getResult() ? "1" : "0");
-            tableList.add(tableRow);
-        }
-        return Util.formatAsTable(tableList, true, true);
-    }
-
-    private static class TruthTableEntry {
-        private Map<String, Boolean> results = new LinkedHashMap<>();
-        private boolean result;
-        private MyEvaluatorContext<String> evaluationContext;
-        private List<String> inputs;
-
-        public TruthTableEntry(MyEvaluatorContext<String> evaluationContext, List<String> inputs) {
-            this.evaluationContext = evaluationContext;
-            this.inputs = inputs;
-        }
-
-        public boolean getResult() {
-            return result;
-        }
-
-        public Map<String, Boolean> getResults() {
-            return results;
-        }
-
-        public List<String> getInputs() {
-            return inputs;
-        }
-
-        public void evaluate(TreeBooleanEvaluator evaluator, String expression) {
-            result = TreeBooleanEvaluator.evaluate(evaluator, evaluationContext, expression);
-            results.putAll(evaluationContext.getSequenceStack());
-        }
+    public static Parameters getPARAMETERS() {
+        return PARAMETERS;
     }
 }

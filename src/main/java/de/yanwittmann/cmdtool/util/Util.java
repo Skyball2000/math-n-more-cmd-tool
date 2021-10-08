@@ -1,8 +1,9 @@
-package de.yanwittmann.util;
+package de.yanwittmann.cmdtool.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -70,5 +71,34 @@ public abstract class Util {
         Object[] temp = input.toArray();
         return (Stream<T>) IntStream.range(0, temp.length)
                 .mapToObj(i -> temp[temp.length - i - 1]);
+    }
+
+    public final static int INPUT_REGULAR = 0;
+    public final static int INPUT_INDENT_1 = 1;
+
+    public static String askForInput(Scanner scanner, int type) {
+        if (type == INPUT_REGULAR) System.out.print("> ");
+        else if (type == INPUT_INDENT_1) System.out.print(" > ");
+        return scanner.nextLine();
+    }
+
+    public static List<String> multiCmdInput(Scanner scanner) {
+        List<String> inputs = new ArrayList<>();
+        while (true) {
+            String input = Util.askForInput(scanner, INPUT_INDENT_1);
+            if (input == null || input.length() == 0) {
+                break;
+            } else if (input.equals("repeat") || input.equals("again")) {
+                System.out.println("Restarting multiline input:");
+                inputs.clear();
+                continue;
+            } else if (input.equals("remove line") || input.equals("repeat line") || input.equals("again line")) {
+                System.out.println("Removed last line from the input.");
+                inputs.remove(inputs.size() - 1);
+                continue;
+            }
+            inputs.add(input);
+        }
+        return inputs;
     }
 }

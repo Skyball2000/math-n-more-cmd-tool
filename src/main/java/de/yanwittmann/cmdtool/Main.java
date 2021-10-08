@@ -1,13 +1,15 @@
-package de.yanwittmann;
+package de.yanwittmann.cmdtool;
 
-import de.yanwittmann.math.TreeBooleanEvaluator;
-import de.yanwittmann.util.ArgParser;
-import de.yanwittmann.util.CommandGenerator;
+import de.yanwittmann.cmdtool.math.ExpressionEvaluation;
+import de.yanwittmann.cmdtool.util.ArgParser;
+import de.yanwittmann.cmdtool.util.CommandGenerator;
+import de.yanwittmann.cmdtool.util.Util;
 import org.snim2.checker.ast.Formula;
 import org.snim2.checker.parser.Parser;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -20,13 +22,14 @@ public class Main {
         System.out.println("| Uses [fathzer javaluator] and [snim2 tautology-checker]");
         System.out.println("| Type [help] for command syntax help\n");
 
+        Scanner scanner = new Scanner(System.in);
+
         ArgParser mathCommand = CommandGenerator.getMathCommand();
         ArgParser settingsCommand = CommandGenerator.getSettingsCommand();
+        ArgParser helpCommand = CommandGenerator.getHelpCommand();
 
         while (true) {
-            System.out.print("> ");
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
+            String input = Util.askForInput(scanner, Util.INPUT_REGULAR);
             if (input == null || input.length() == 0) continue;
             if (input.equals("exit") || input.equals("quit")) {
                 System.out.println("bye");
@@ -37,22 +40,40 @@ public class Main {
                 continue;
             }
 
-            if (mathCommand.matches(input)) {
+            if (helpCommand.matches(input)) {
+                try {
+                    System.out.println(settingsCommand);
+                    System.out.println(mathCommand);
+
+                } catch (Exception e) {
+                    System.err.println("An error occurred while performing the operation: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (settingsCommand.matches(input)) {
+                try {
+                    ArgParser.Results result = mathCommand.parse(input);
+                    boolean argUnicode = result.isPresent("unicode");
+
+                    if (argUnicode) {
+                        unicodeOutput = result.getBoolean("unicode");
+                    }
+                } catch (Exception e) {
+                    System.err.println("An error occurred while performing the operation: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (mathCommand.matches(input)) {
                 try {
                     ArgParser.Results result = mathCommand.parse(input);
 
                     boolean argTautologie = result.isPresent("tautologie");
                     boolean argTruth = result.isPresent("truth");
+                    boolean argTruthBuilder = result.isPresent("truthbuilder");
                     boolean argVariables = result.isPresent("variables");
                     boolean argEquals = result.isPresent("equals");
                     boolean argP1 = result.isPresent("-p1");
                     boolean argP2 = result.isPresent("-p2");
-                    boolean argUnicode = result.isPresent("unicode");
 
-                    if (argUnicode) {
-                        unicodeOutput = result.getBoolean("unicode");
-
-                    } else if (argTautologie) {
+                    if (argTautologie) {
                         InputStream inputStream = new ByteArrayInputStream(
                                 result.getString("tautologie")
                                         .replace("1", "TT")
@@ -77,15 +98,22 @@ public class Main {
 
                     } else if (argTruth) {
                         System.out.println(normalizeExpressionOutput(result.getString("truth")));
-                        System.out.println(TreeBooleanEvaluator.generateTruthTable(result.getString("truth")));
+                        System.out.println(ExpressionEvaluation.generateTruthTable(result.getString("truth")));
+
+                    } else if (argTruthBuilder) {
+                        System.out.println("Enter the input variables, split by a space character:");
+                        List<String> variables = ExpressionEvaluation.extractVariables(Util.askForInput(scanner, Util.INPUT_INDENT_1));
+                        System.out.println("Enter one expression per line, leave empty to stop. To assign a new variable, enter [VAR] = [EXPR].");
+                        List<String> expressions = Util.multiCmdInput(scanner);
+                        System.out.println(ExpressionEvaluation.buildTruthTableFromMultipleExpressions(variables, expressions));
 
                     } else if (argVariables) {
                         System.out.println(normalizeExpressionOutput(result.getString("variables")));
-                        System.out.println(TreeBooleanEvaluator.extractVariables(result.getString("variables")));
+                        System.out.println(ExpressionEvaluation.extractVariables(result.getString("variables")));
 
                     } else if (argEquals && argP1 && argP2) {
-                        String result1 = TreeBooleanEvaluator.generateTruthTable(result.getString("-p1"));
-                        String result2 = TreeBooleanEvaluator.generateTruthTable(result.getString("-p2"));
+                        String result1 = ExpressionEvaluation.generateTruthTable(result.getString("-p1"));
+                        String result2 = ExpressionEvaluation.generateTruthTable(result.getString("-p2"));
 
                         if (result1.equals(result2)) {
                             System.out.println("Both expressions lead to the same truth table:");
@@ -114,7 +142,7 @@ public class Main {
 
     private static boolean unicodeOutput = false;
 
-    private static String normalizeExpressionOutput(String expression) {
+    public static String normalizeExpressionOutput(String expression) {
         String not, and, or, equi, impl;
         if (unicodeOutput) {
             not = UNICODE_NOT;

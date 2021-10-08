@@ -1,6 +1,13 @@
-package de.yanwittmann.util;
+package de.yanwittmann.cmdtool.util;
 
 public abstract class CommandGenerator {
+
+    public static ArgParser getHelpCommand() {
+        ArgParser helpCommand = new ArgParser();
+        helpCommand.setPrefix("help");
+        helpCommand.setPrefixRequired(true);
+        return helpCommand;
+    }
 
     public static ArgParser getSettingsCommand() {
         ArgParser settingsCommand = new ArgParser();
@@ -41,6 +48,13 @@ public abstract class CommandGenerator {
         );
         mathCommand.addArgument(
                 new ArgParser.Argument()
+                        .addIdentifier("truthbuilder", "trb")
+                        .setParameterName("expression")
+                        .setRequired(false)
+                        .setDescription("Build yourself a truth table from several expressions.")
+        );
+        mathCommand.addArgument(
+                new ArgParser.Argument()
                         .addIdentifier("variables", "va")
                         .setParameterName("expression")
                         .setRequired(false)
@@ -55,7 +69,7 @@ public abstract class CommandGenerator {
                         .setRequired(false)
                         .setParameterRequired(false)
                         .setParameterType(ArgParser.Argument.ParameterType.STRING)
-                        .setDescription("Checks if two expressions lead to the same truth table. Provide expressions with parameters -p1 and -p2")
+                        .setDescription("Checks if two expressions lead to the same truth table. Provide expressions with parameters -p1 and -p2.")
         );
         mathCommand.addArgument(
                 new ArgParser.Argument()

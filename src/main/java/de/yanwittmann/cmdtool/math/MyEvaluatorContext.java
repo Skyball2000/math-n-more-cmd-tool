@@ -1,4 +1,4 @@
-package de.yanwittmann.math;
+package de.yanwittmann.cmdtool.math;
 
 import com.fathzer.soft.javaluator.StaticVariableSet;
 

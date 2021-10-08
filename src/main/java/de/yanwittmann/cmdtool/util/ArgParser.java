@@ -1,4 +1,4 @@
-package de.yanwittmann.util;
+package de.yanwittmann.cmdtool.util;
 
 import java.util.*;
 import java.util.stream.Collectors;
