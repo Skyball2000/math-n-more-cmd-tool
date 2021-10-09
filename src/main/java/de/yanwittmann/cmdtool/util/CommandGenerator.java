@@ -25,6 +25,19 @@ public abstract class CommandGenerator {
         return settingsCommand;
     }
 
+    public static ArgParser getHistoryCommand() {
+        ArgParser historyCommand = new ArgParser();
+        historyCommand.setPrefix("history");
+        historyCommand.setPrefixRequired(true);
+        historyCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("clear", "c")
+                        .setRequired(false)
+                        .setDescription("Clears the history.")
+        );
+        return historyCommand;
+    }
+
     public static ArgParser getNotesCommand() {
         ArgParser notesCommand = new ArgParser();
         notesCommand.setPrefix("note");
@@ -55,7 +68,7 @@ public abstract class CommandGenerator {
         );
         notesCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("clear")
+                        .addIdentifier("clear", "c")
                         .setRequired(false)
                         .setDescription("Clears all notes.")
         );

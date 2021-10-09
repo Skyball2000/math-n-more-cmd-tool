@@ -17,7 +17,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    private final static String TOOL_VERSION = "1.0.1";
+    private final static String TOOL_VERSION = "1.0.2";
 
     public static void main(String[] args) {
 
@@ -30,8 +30,15 @@ public class Main {
 
         ArgParser mathCommand = CommandGenerator.getMathCommand();
         ArgParser notesCommand = CommandGenerator.getNotesCommand();
+        ArgParser historyCommand = CommandGenerator.getHistoryCommand();
         ArgParser settingsCommand = CommandGenerator.getSettingsCommand();
         ArgParser helpCommand = CommandGenerator.getHelpCommand();
+
+        Util.setInputListener(input -> {
+            if (input.startsWith("history") || input.startsWith("exit") || input.length() == 0) return;
+            dataProvider.getHistoryData().addNote(input);
+            dataProvider.save();
+        });
 
         while (true) {
             String input = Util.askForInput(scanner, Util.INPUT_REGULAR);
@@ -50,6 +57,7 @@ public class Main {
                     System.out.println(settingsCommand);
                     System.out.println(mathCommand);
                     System.out.println(notesCommand);
+                    System.out.println(historyCommand);
 
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());
@@ -95,6 +103,23 @@ public class Main {
                             dataProvider.save();
                             System.out.println("Cleared all notes.");
                         }
+                    }
+                } catch (Exception e) {
+                    System.err.println("An error occurred while performing the operation: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (historyCommand.matches(input)) {
+                try {
+                    ArgParser.Results result = historyCommand.parse(input);
+                    boolean argClear = result.isPresent("clear");
+                    if (argClear) {
+                        dataProvider.getHistoryData().clearNotes();
+                        dataProvider.save();
+                        System.out.println("Cleared history.");
+                    } else {
+                        List<String> notes = dataProvider.getHistoryData().getNotes();
+                        if (notes.size() == 0) System.out.println("History is empty.");
+                        for (int i = 0; i < notes.size(); i++) System.out.println(" " + i + ": " + notes.get(i));
                     }
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());

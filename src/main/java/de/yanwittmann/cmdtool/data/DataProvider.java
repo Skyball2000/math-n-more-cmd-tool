@@ -9,9 +9,10 @@ import java.util.List;
 
 public class DataProvider {
 
-    private File dataDir;
+    private final File dataDir;
     private File generalData;
     private NotesData notesData;
+    private NotesData historyData;
 
     public DataProvider(File dataDir) {
         this.dataDir = dataDir;
@@ -36,15 +37,27 @@ public class DataProvider {
         } else {
             notesData = new NotesData(generalDataJson.optJSONObject("notes"));
         }
+
+        if (generalDataJson == null) {
+            historyData = new NotesData(null);
+        } else {
+            historyData = new NotesData(generalDataJson.optJSONObject("history"));
+            historyData.setMaxSize(15);
+        }
     }
 
     public NotesData getNotesData() {
         return notesData;
     }
 
+    public NotesData getHistoryData() {
+        return historyData;
+    }
+
     public void save() {
         JSONObject generalDataJson = new JSONObject();
         generalDataJson.put("notes", notesData.toJson());
+        generalDataJson.put("history", historyData.toJson());
         try {
             writeFile(generalData, generalDataJson.toString());
         } catch (IOException e) {

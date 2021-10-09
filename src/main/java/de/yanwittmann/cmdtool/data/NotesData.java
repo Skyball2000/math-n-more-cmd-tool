@@ -9,6 +9,7 @@ import java.util.List;
 public class NotesData extends AbstractSavable {
 
     private JSONArray notesArray;
+    private int maxSize = -1;
 
     public NotesData(JSONObject data) {
         if (data == null) {
@@ -35,11 +36,22 @@ public class NotesData extends AbstractSavable {
 
     public int addNote(String note) {
         notesArray.put(note);
+        limitSize();
         return notesArray.length() - 1;
     }
 
     public void clearNotes() {
         notesArray = new JSONArray();
+    }
+
+    public void setMaxSize(int maxSize) {
+        this.maxSize = maxSize;
+        limitSize();
+    }
+
+    private void limitSize() {
+        if (maxSize != -1 && notesArray.length() > maxSize)
+            notesArray.remove(0);
     }
 
     @Override

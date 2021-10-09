@@ -79,7 +79,9 @@ public abstract class Util {
     public static String askForInput(Scanner scanner, int type) {
         if (type == INPUT_REGULAR) System.out.print("> ");
         else if (type == INPUT_INDENT_1) System.out.print(" > ");
-        return scanner.nextLine();
+        String input = scanner.nextLine();
+        inputListener.input(input);
+        return input;
     }
 
     public static List<String> multiCmdInput(Scanner scanner) {
@@ -100,5 +102,15 @@ public abstract class Util {
             inputs.add(input);
         }
         return inputs;
+    }
+
+    private static InputListener inputListener;
+
+    public static void setInputListener(InputListener listener) {
+        inputListener = listener;
+    }
+
+    public interface InputListener {
+        void input(String input);
     }
 }
