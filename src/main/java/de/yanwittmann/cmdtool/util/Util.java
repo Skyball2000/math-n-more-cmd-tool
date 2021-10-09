@@ -88,11 +88,11 @@ public abstract class Util {
             String input = Util.askForInput(scanner, INPUT_INDENT_1);
             if (input == null || input.length() == 0) {
                 break;
-            } else if (input.equals("repeat") || input.equals("again")) {
+            } else if (input.equals("restart") || input.equals("reset") || input.equals("repeat") || input.equals("again")) {
                 System.out.println("Restarting multiline input:");
                 inputs.clear();
                 continue;
-            } else if (input.equals("remove line") || input.equals("repeat line") || input.equals("again line")) {
+            } else if (input.equals("undo") || input.equals("remove line") || input.equals("repeat line") || input.equals("again line")) {
                 System.out.println("Removed last line from the input.");
                 inputs.remove(inputs.size() - 1);
                 continue;

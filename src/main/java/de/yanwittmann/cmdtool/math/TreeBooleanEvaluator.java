@@ -9,29 +9,59 @@ import java.util.*;
 
 public class TreeBooleanEvaluator extends AbstractEvaluator<String> {
 
-    final static List<Operator> NOT_OPERATORS = new ArrayList<>();
-    final static List<Operator> AND_OPERATORS = new ArrayList<>();
-    final static List<Operator> OR_OPERATORS = new ArrayList<>();
-    final static List<Operator> IMPL_OPERATORS = new ArrayList<>();
-    final static List<Operator> EQUI_OPERATORS = new ArrayList<>();
+    public final static List<Operator> NOT_OPERATORS = new ArrayList<>();
+    public final static List<Operator> AND_OPERATORS = new ArrayList<>();
+    public final static List<Operator> OR_OPERATORS = new ArrayList<>();
+    public final static List<Operator> NAND_OPERATORS = new ArrayList<>();
+    public final static List<Operator> NOR_OPERATORS = new ArrayList<>();
+    public final static List<Operator> XOR_OPERATORS = new ArrayList<>();
+    public final static List<Operator> IMPL_OPERATORS = new ArrayList<>();
+    public final static List<Operator> EQUI_OPERATORS = new ArrayList<>();
 
     static {
         NOT_OPERATORS.add(new Operator("not", 1, Operator.Associativity.RIGHT, 5));
         NOT_OPERATORS.add(new Operator("NOT", 1, Operator.Associativity.RIGHT, 5));
         NOT_OPERATORS.add(new Operator("!", 1, Operator.Associativity.RIGHT, 5));
         NOT_OPERATORS.add(new Operator("¬", 1, Operator.Associativity.RIGHT, 5));
+        NOT_OPERATORS.add(new Operator("-", 1, Operator.Associativity.RIGHT, 5));
+
+        NAND_OPERATORS.add(new Operator("!AND", 2, Operator.Associativity.LEFT, 4));
+        NAND_OPERATORS.add(new Operator("NOT AND", 2, Operator.Associativity.LEFT, 4));
+        NAND_OPERATORS.add(new Operator("not and", 2, Operator.Associativity.LEFT, 4));
+        NAND_OPERATORS.add(new Operator("NAND", 2, Operator.Associativity.LEFT, 4));
+        NAND_OPERATORS.add(new Operator("nand", 2, Operator.Associativity.LEFT, 4));
+
+        AND_OPERATORS.add(new Operator("*", 2, Operator.Associativity.LEFT, 4));
         AND_OPERATORS.add(new Operator("&&", 2, Operator.Associativity.LEFT, 4));
         AND_OPERATORS.add(new Operator("AND", 2, Operator.Associativity.LEFT, 4));
         AND_OPERATORS.add(new Operator("and", 2, Operator.Associativity.LEFT, 4));
         AND_OPERATORS.add(new Operator("∧", 2, Operator.Associativity.LEFT, 4));
+        AND_OPERATORS.add(new Operator("/\\", 2, Operator.Associativity.LEFT, 4));
+
+        NOR_OPERATORS.add(new Operator("!OR", 2, Operator.Associativity.LEFT, 3));
+        NOR_OPERATORS.add(new Operator("NOT OR", 2, Operator.Associativity.LEFT, 3));
+        NOR_OPERATORS.add(new Operator("not or", 2, Operator.Associativity.LEFT, 3));
+        NOR_OPERATORS.add(new Operator("NOR", 2, Operator.Associativity.LEFT, 3));
+        NOR_OPERATORS.add(new Operator("nor", 2, Operator.Associativity.LEFT, 3));
+        NOR_OPERATORS.add(new Operator("!>=", 2, Operator.Associativity.LEFT, 3));
+
+        OR_OPERATORS.add(new Operator("+", 2, Operator.Associativity.LEFT, 3));
         OR_OPERATORS.add(new Operator("||", 2, Operator.Associativity.LEFT, 3));
         OR_OPERATORS.add(new Operator("OR", 2, Operator.Associativity.LEFT, 3));
         OR_OPERATORS.add(new Operator("or", 2, Operator.Associativity.LEFT, 3));
         OR_OPERATORS.add(new Operator("∨", 2, Operator.Associativity.LEFT, 3));
+        OR_OPERATORS.add(new Operator("\\/", 2, Operator.Associativity.LEFT, 3));
+        OR_OPERATORS.add(new Operator(">=", 2, Operator.Associativity.LEFT, 3));
+
+        XOR_OPERATORS.add(new Operator("XOR", 2, Operator.Associativity.LEFT, 3));
+        XOR_OPERATORS.add(new Operator("⊕", 2, Operator.Associativity.LEFT, 3));
+        XOR_OPERATORS.add(new Operator("=1", 2, Operator.Associativity.LEFT, 3));
+
         IMPL_OPERATORS.add(new Operator("=>", 2, Operator.Associativity.LEFT, 2));
         IMPL_OPERATORS.add(new Operator("IMPL", 2, Operator.Associativity.LEFT, 2));
         IMPL_OPERATORS.add(new Operator("impl", 2, Operator.Associativity.LEFT, 2));
         IMPL_OPERATORS.add(new Operator("→", 2, Operator.Associativity.LEFT, 2));
+
         EQUI_OPERATORS.add(new Operator("<=>", 2, Operator.Associativity.LEFT, 1));
         EQUI_OPERATORS.add(new Operator("EQUI", 2, Operator.Associativity.LEFT, 1));
         EQUI_OPERATORS.add(new Operator("equi", 2, Operator.Associativity.LEFT, 1));
@@ -47,6 +77,9 @@ public class TreeBooleanEvaluator extends AbstractEvaluator<String> {
         OR_OPERATORS.forEach(PARAMETERS::add);
         IMPL_OPERATORS.forEach(PARAMETERS::add);
         EQUI_OPERATORS.forEach(PARAMETERS::add);
+        NAND_OPERATORS.forEach(PARAMETERS::add);
+        NOR_OPERATORS.forEach(PARAMETERS::add);
+        XOR_OPERATORS.forEach(PARAMETERS::add);
         PARAMETERS.addExpressionBracket(BracketPair.PARENTHESES);
     }
 
@@ -103,6 +136,22 @@ public class TreeBooleanEvaluator extends AbstractEvaluator<String> {
             String o1 = operands.next();
             result = !getValue(o1);
             eval = "(" + operator.getSymbol() + (operator.getSymbol().equals("!") ? " " : "") + o1 + ")=" + result;
+        } else if (NAND_OPERATORS.contains(operator)) {
+            String o1 = operands.next();
+            String o2 = operands.next();
+            result = !(getValue(o1) && getValue(o2));
+            eval = "(" + o1 + " " + operator.getSymbol() + " " + o2 + ")=" + result;
+        } else if (NOR_OPERATORS.contains(operator)) {
+            String o1 = operands.next();
+            String o2 = operands.next();
+            result = !(getValue(o1) || getValue(o2));
+            eval = "(" + o1 + " " + operator.getSymbol() + " " + o2 + ")=" + result;
+        } else if (XOR_OPERATORS.contains(operator)) {
+            String o1 = operands.next();
+            String o2 = operands.next();
+            boolean v1 = getValue(o1), v2 = getValue(o2);
+            result = (v1 && !v2) || (!v1 && v2);
+            eval = "(" + o1 + " " + operator.getSymbol() + " " + o2 + ")=" + result;
         } else {
             throw new IllegalArgumentException("Invalid operator: " + operator.getSymbol());
         }

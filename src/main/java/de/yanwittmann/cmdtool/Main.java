@@ -1,6 +1,8 @@
 package de.yanwittmann.cmdtool;
 
+import com.fathzer.soft.javaluator.Operator;
 import de.yanwittmann.cmdtool.math.ExpressionEvaluation;
+import de.yanwittmann.cmdtool.math.TreeBooleanEvaluator;
 import de.yanwittmann.cmdtool.util.ArgParser;
 import de.yanwittmann.cmdtool.util.CommandGenerator;
 import de.yanwittmann.cmdtool.util.Util;
@@ -103,7 +105,7 @@ public class Main {
                     } else if (argTruthBuilder) {
                         System.out.println("Enter the input variables, split by a space character:");
                         List<String> variables = ExpressionEvaluation.extractVariables(Util.askForInput(scanner, Util.INPUT_INDENT_1));
-                        System.out.println("Enter one expression per line, leave empty to stop. To assign a new variable, enter [VAR] = [EXPR].");
+                        System.out.println("Enter one expression per line, leave empty to stop. To assign a new variable, enter [VAR] = [EXPR]. Use [undo] and [restart] to control the input.");
                         List<String> expressions = Util.multiCmdInput(scanner);
                         System.out.println(ExpressionEvaluation.buildTruthTableFromMultipleExpressions(variables, expressions));
 
@@ -131,6 +133,11 @@ public class Main {
                 } catch (Exception e) {
                     System.err.println("An error occurred while parsing/solving the input: " + e.getMessage());
                     e.printStackTrace();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
         }
@@ -143,37 +150,52 @@ public class Main {
     private static boolean unicodeOutput = false;
 
     public static String normalizeExpressionOutput(String expression) {
-        String not, and, or, equi, impl;
+        String not, and, or, equi, impl, nand, nor, xor;
         if (unicodeOutput) {
             not = UNICODE_NOT;
             and = UNICODE_AND;
             or = UNICODE_OR;
             equi = UNICODE_EQUI;
             impl = UNICODE_IMPL;
+            nand = UNICODE_NAND;
+            nor = UNICODE_NOR;
+            xor = UNICODE_XOR;
         } else {
             not = ASCII_NOT;
             and = ASCII_AND;
             or = ASCII_OR;
             equi = ASCII_EQUI;
             impl = ASCII_IMPL;
+            nand = ASCII_NAND;
+            nor = ASCII_NOR;
+            xor = ASCII_XOR;
         }
-        return expression
-                .replace("!", not).replace("not", not).replace("NOT", not).replace(not + " ", not)
-                .replace("/\\", and).replace("and", and).replace("AND", and).replace("&&", and)
-                .replace("\\/", or).replace("or", or).replace("OR", or).replace("||", or)
-                .replace("<=>", equi).replace("EQUI", equi)
-                .replace("=>", impl).replace("IMPL", impl);
+        for (Operator o : TreeBooleanEvaluator.NAND_OPERATORS) expression = expression.replace(o.getSymbol(), nand);
+        for (Operator o : TreeBooleanEvaluator.NOR_OPERATORS) expression = expression.replace(o.getSymbol(), nor);
+        for (Operator o : TreeBooleanEvaluator.NOT_OPERATORS) expression = expression.replace(o.getSymbol(), not);
+        for (Operator o : TreeBooleanEvaluator.OR_OPERATORS) expression = expression.replace(o.getSymbol(), or);
+        for (Operator o : TreeBooleanEvaluator.AND_OPERATORS) expression = expression.replace(o.getSymbol(), and);
+        for (Operator o : TreeBooleanEvaluator.EQUI_OPERATORS) expression = expression.replace(o.getSymbol(), equi);
+        for (Operator o : TreeBooleanEvaluator.IMPL_OPERATORS) expression = expression.replace(o.getSymbol(), impl);
+        for (Operator o : TreeBooleanEvaluator.XOR_OPERATORS) expression = expression.replace(o.getSymbol(), xor);
+        return expression.replaceAll(" +", " ");
     }
 
-    private final static String UNICODE_NOT = "\u00AC";
-    private final static String UNICODE_AND = "\u2227";
-    private final static String UNICODE_OR = "\u2228";
-    private final static String UNICODE_EQUI = "\u2194";
-    private final static String UNICODE_IMPL = "\u2192";
+    private final static String UNICODE_NOT = " \u00AC ";
+    private final static String UNICODE_AND = " \u2227 ";
+    private final static String UNICODE_OR = " \u2228 ";
+    private final static String UNICODE_EQUI = " \u2194 ";
+    private final static String UNICODE_IMPL = " \u2192 ";
+    private final static String UNICODE_NAND = " NAND ";
+    private final static String UNICODE_NOR = " NOR ";
+    private final static String UNICODE_XOR = " ⊕ ";
 
-    private final static String ASCII_NOT = "!";
-    private final static String ASCII_AND = "AND";
-    private final static String ASCII_OR = "OR";
-    private final static String ASCII_EQUI = "<=>";
-    private final static String ASCII_IMPL = "=>";
+    private final static String ASCII_NOT = " ! ";
+    private final static String ASCII_AND = " AND ";
+    private final static String ASCII_OR = " OR ";
+    private final static String ASCII_EQUI = " <=> ";
+    private final static String ASCII_IMPL = " => ";
+    private final static String ASCII_NAND = " NAND ";
+    private final static String ASCII_NOR = " NOR ";
+    private final static String ASCII_XOR = " XOR ";
 }

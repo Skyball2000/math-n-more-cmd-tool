@@ -24,7 +24,8 @@ public abstract class ExpressionEvaluation {
             if (operator.length() > 1) {
                 expression = expression.replace(operator, " ");
             } else {
-                expression = expression.replaceAll(operator + "($| )", " ").replaceAll("(^| )" + operator, " ");
+                String quoted = Pattern.quote(operator);
+                expression = expression.replaceAll(quoted + "($| )", " ").replaceAll("(^| )" + quoted, " ");
             }
         }
         expression = expression.replaceAll("[^a-zA-Z0-9][01][^a-zA-Z0-9]", "");
