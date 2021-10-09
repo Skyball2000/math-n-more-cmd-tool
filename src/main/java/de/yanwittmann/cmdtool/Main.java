@@ -1,6 +1,7 @@
 package de.yanwittmann.cmdtool;
 
 import com.fathzer.soft.javaluator.Operator;
+import de.yanwittmann.cmdtool.data.DataProvider;
 import de.yanwittmann.cmdtool.math.ExpressionEvaluation;
 import de.yanwittmann.cmdtool.math.TreeBooleanEvaluator;
 import de.yanwittmann.cmdtool.util.ArgParser;
@@ -25,8 +26,10 @@ public class Main {
         System.out.println("| Type [help] for command syntax help\n");
 
         Scanner scanner = new Scanner(System.in);
+        DataProvider dataProvider = DataProvider.createMainDataProvider();
 
         ArgParser mathCommand = CommandGenerator.getMathCommand();
+        ArgParser notesCommand = CommandGenerator.getNotesCommand();
         ArgParser settingsCommand = CommandGenerator.getSettingsCommand();
         ArgParser helpCommand = CommandGenerator.getHelpCommand();
 
@@ -46,6 +49,7 @@ public class Main {
                 try {
                     System.out.println(settingsCommand);
                     System.out.println(mathCommand);
+                    System.out.println(notesCommand);
 
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());
@@ -58,6 +62,39 @@ public class Main {
 
                     if (argUnicode) {
                         unicodeOutput = result.getBoolean("unicode");
+                    }
+                } catch (Exception e) {
+                    System.err.println("An error occurred while performing the operation: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (notesCommand.matches(input)) {
+                try {
+                    ArgParser.Results result = notesCommand.parse(input);
+                    boolean argAdd = result.isPresent("add");
+                    boolean argRemove = result.isPresent("remove");
+                    boolean argList = result.isPresent("list");
+                    boolean argClear = result.isPresent("clear");
+
+                    if (argAdd) {
+                        String noteText = result.getString("add");
+                        int noteIndex = dataProvider.getNotesData().addNote(noteText);
+                        System.out.println("Created note with index " + noteIndex);
+                        dataProvider.save();
+                    } else if (argRemove) {
+                        int noteIndex = result.getInt("remove");
+                        dataProvider.getNotesData().removeNote(noteIndex);
+                        System.out.println("Removed note with index " + noteIndex);
+                        dataProvider.save();
+                    } else if (argList) {
+                        List<String> notes = dataProvider.getNotesData().getNotes();
+                        for (int i = 0; i < notes.size(); i++) System.out.println(" " + i + ": " + notes.get(i));
+                    } else if (argClear) {
+                        System.out.println("Are you sure? This cannot be undone. Type [confirm] to delete all notes:");
+                        if (Util.askForInput(scanner, Util.INPUT_INDENT_1).equals("confirm")) {
+                            dataProvider.getNotesData().clearNotes();
+                            dataProvider.save();
+                            System.out.println("Cleared all notes.");
+                        }
                     }
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());

@@ -11,7 +11,7 @@ public abstract class CommandGenerator {
 
     public static ArgParser getSettingsCommand() {
         ArgParser settingsCommand = new ArgParser();
-        settingsCommand.setPrefix("opt");
+        settingsCommand.setPrefix("option");
         settingsCommand.setPrefixRequired(true);
         settingsCommand.addArgument(
                 new ArgParser.Argument()
@@ -20,8 +20,46 @@ public abstract class CommandGenerator {
                         .setRequired(false)
                         .setParameterRequired(true)
                         .setParameterType(ArgParser.Argument.ParameterType.BOOLEAN)
+                        .setDescription("Will allow unicode characters to be printed to the console.")
         );
         return settingsCommand;
+    }
+
+    public static ArgParser getNotesCommand() {
+        ArgParser notesCommand = new ArgParser();
+        notesCommand.setPrefix("note");
+        notesCommand.setPrefixRequired(true);
+        notesCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("add", "a")
+                        .setParameterName("note")
+                        .setRequired(false)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.STRING)
+                        .setDescription("The note text to create the note from.")
+        );
+        notesCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("remove", "r")
+                        .setParameterName("note")
+                        .setRequired(false)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.INTEGER)
+                        .setDescription("The note index to remove.")
+        );
+        notesCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("list", "l")
+                        .setRequired(false)
+                        .setDescription("Lists all notes.")
+        );
+        notesCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("clear")
+                        .setRequired(false)
+                        .setDescription("Clears all notes.")
+        );
+        return notesCommand;
     }
 
     public static ArgParser getMathCommand() {
