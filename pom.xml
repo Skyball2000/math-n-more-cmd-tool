@@ -14,6 +14,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>de.yanwittmann</groupId>
+            <artifactId>j2chartjs</artifactId>
+            <version>1.1</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/com.fathzer/javaluator -->
         <dependency>
             <groupId>com.fathzer</groupId>
@@ -30,13 +35,18 @@
             <artifactId>json</artifactId>
             <version>20210307</version>
         </dependency>
-
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
-            <scope>test</scope>
+            <groupId>jnafilechooser</groupId>
+            <artifactId>jnafilechooser-api</artifactId>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-csv -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

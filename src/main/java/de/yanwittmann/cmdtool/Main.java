@@ -1,6 +1,7 @@
 package de.yanwittmann.cmdtool;
 
 import com.fathzer.soft.javaluator.Operator;
+import de.yanwittmann.cmdtool.chart.ChartCreator;
 import de.yanwittmann.cmdtool.data.DataProvider;
 import de.yanwittmann.cmdtool.math.ExpressionEvaluation;
 import de.yanwittmann.cmdtool.math.TreeBooleanEvaluator;
@@ -11,6 +12,7 @@ import org.snim2.checker.ast.Formula;
 import org.snim2.checker.parser.Parser;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Scanner;
@@ -30,6 +32,7 @@ public class Main {
 
         ArgParser mathCommand = CommandGenerator.getMathCommand();
         ArgParser notesCommand = CommandGenerator.getNotesCommand();
+        ArgParser chartCommand = CommandGenerator.getChartCommand();
         ArgParser historyCommand = CommandGenerator.getHistoryCommand();
         ArgParser settingsCommand = CommandGenerator.getSettingsCommand();
         ArgParser helpCommand = CommandGenerator.getHelpCommand();
@@ -58,6 +61,7 @@ public class Main {
                     System.out.println(mathCommand);
                     System.out.println(notesCommand);
                     System.out.println(historyCommand);
+                    System.out.println(chartCommand);
 
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());
@@ -73,6 +77,33 @@ public class Main {
                     }
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (chartCommand.matches(input)) {
+                try {
+                    ArgParser.Results result = chartCommand.parse(input);
+                    boolean argCsv = result.isPresent("csv");
+                    boolean argOut = result.isPresent("out");
+                    boolean argTitle = result.isPresent("title");
+                    boolean argStartAtZero = result.isPresent("startAtZero");
+
+                    File csvFile = null;
+                    if (argCsv) csvFile = new File(result.getString("csv"));
+                    if (csvFile == null || !csvFile.exists()) csvFile = dataProvider.pickFile("CSV", "csv");
+                    if (csvFile == null || !csvFile.exists()) return;
+
+                    ChartCreator chartCreator = new ChartCreator();
+                    chartCreator.setCsvFile(csvFile);
+                    chartCreator.setChartType(result.getString("type"));
+                    if (argOut) chartCreator.setOutFile(new File(result.getString("out")));
+                    if (argTitle) chartCreator.setTitle(result.getString("title"));
+                    if (argStartAtZero) chartCreator.setStartAtZero(result.getBoolean("startAtZero"));
+                    chartCreator.makeChart();
+                    chartCreator.writeChart();
+                    chartCreator.openChart();
+
+                } catch (Exception e) {
+                    System.err.println("An error occurred while creating the chart: " + e.getMessage());
                     e.printStackTrace();
                 }
             } else if (notesCommand.matches(input)) {
@@ -112,6 +143,8 @@ public class Main {
                 try {
                     ArgParser.Results result = historyCommand.parse(input);
                     boolean argClear = result.isPresent("clear");
+                    boolean argHead = result.isPresent("head");
+
                     if (argClear) {
                         dataProvider.getHistoryData().clearNotes();
                         dataProvider.save();
@@ -119,7 +152,9 @@ public class Main {
                     } else {
                         List<String> notes = dataProvider.getHistoryData().getNotes();
                         if (notes.size() == 0) System.out.println("History is empty.");
-                        for (int i = 0; i < notes.size(); i++) System.out.println(" " + i + ": " + notes.get(i));
+                        for (int i = notes.size() - 1; i > 0 && (!argHead || i >= notes.size() - 5); i--) {
+                            System.out.println(" " + i + ": " + notes.get(i));
+                        }
                     }
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());

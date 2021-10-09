@@ -25,6 +25,54 @@ public abstract class CommandGenerator {
         return settingsCommand;
     }
 
+    public static ArgParser getChartCommand() {
+        ArgParser chartCommand = new ArgParser();
+        chartCommand.setPrefix("chart");
+        chartCommand.setPrefixRequired(true);
+        chartCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("csv", "c")
+                        .setRequired(false)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.STRING)
+                        .setDescription("Sets the csv file to read the values from.")
+        );
+        chartCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("out", "o")
+                        .setRequired(false)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.STRING)
+                        .setDescription("The file to write the chart to.")
+        );
+        chartCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("type", "t")
+                        .setRequired(true)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.STRING)
+                        .addValidParameterValue("bar", "line", "pie", "doughnut", "radar")
+                        .setDescription("The chart type to use to visualize the data.")
+        );
+        chartCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("title")
+                        .setRequired(false)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.STRING)
+                        .setDescription("The chart title.")
+        );
+        chartCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("startAtZero", "zero")
+                        .setRequired(false)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.BOOLEAN)
+                        .setDescription("Whether or not to let the chart start at zero. Default: true.")
+        );
+        return chartCommand;
+    }
+
     public static ArgParser getHistoryCommand() {
         ArgParser historyCommand = new ArgParser();
         historyCommand.setPrefix("history");
@@ -34,6 +82,12 @@ public abstract class CommandGenerator {
                         .addIdentifier("clear", "c")
                         .setRequired(false)
                         .setDescription("Clears the history.")
+        );
+        historyCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("head", "h")
+                        .setRequired(false)
+                        .setDescription("Will only print the most recent entries.")
         );
         return historyCommand;
     }

@@ -1,7 +1,9 @@
 package de.yanwittmann.cmdtool.data;
 
+import jnafilechooser.api.JnaFileChooser;
 import org.json.JSONObject;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -64,6 +66,14 @@ public class DataProvider {
             System.out.println("Unable to write general data file: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public File pickFile(String filterName, String... filters) {
+        JnaFileChooser fc = new JnaFileChooser();
+        if (filterName != null && filterName.length() > 0)
+            fc.addFilter(filterName, filters);
+        fc.showOpenDialog(null);
+        return fc.getSelectedFile();
     }
 
     private final static String FILENAME_GENERAL_DATA = "data";
