@@ -241,7 +241,7 @@ public class Main {
 
                         if (result1.equals(result2)) {
                             System.out.println("Both expressions lead to the same truth table:");
-                            System.out.println("(" + normalizeExpressionOutput(result.getString("-p1")) + ")  <=>  (" + result.getString("-p2") + ")");
+                            System.out.println("(" + normalizeExpressionOutput(result.getString("-p1")) + ")  <=>  (" + normalizeExpressionOutput(result.getString("-p2")) + ")");
                             System.out.println(result1);
                         } else {
                             System.out.println("The expressions lead to different truth tables:");

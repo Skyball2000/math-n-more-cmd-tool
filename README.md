@@ -19,7 +19,7 @@ A command line tool that can perform a variety of different tasks, mainly mathem
   <summary>Display a truth table from an expression</summary>
 
 ```
-> math tr (A => B) AND NOT C
+> math -tr (A => B) AND NOT C
 (A => B) AND !C
  A ║ B ║ C ║ out
 ═══╬═══╬═══╬═════
@@ -114,6 +114,18 @@ A OR B
  1 ║ 0 ║ 1
  1 ║ 1 ║ 1
 ```
+
+```
+> math -eq -p1 A AND B -p2 NOT (NOT A OR NOT B)
+Both expressions lead to the same truth table:
+(A AND B)  <=>  (!(!A OR !B))
+ A ║ B ║ out
+═══╬═══╬═════
+ 0 ║ 0 ║ 0
+ 0 ║ 1 ║ 0
+ 1 ║ 0 ║ 0
+ 1 ║ 1 ║ 1
+ ```
 
 </details>
 
