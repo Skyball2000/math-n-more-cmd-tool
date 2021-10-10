@@ -150,7 +150,8 @@ public class Main {
                         dataProvider.save();
                     } else if (argList) {
                         List<String> notes = dataProvider.getNotesData().getNotes();
-                        for (int i = 0; i < notes.size(); i++) System.out.println(" " + i + ": " + notes.get(i));
+                        for (int i = 0; i < notes.size(); i++)
+                            System.out.printf(" %2d: %s%n", i, notes.get(i));
                     } else if (argClear) {
                         System.out.println("Are you sure? This cannot be undone. Type [confirm] to delete all notes:");
                         if (Util.askForInput(scanner, Util.INPUT_INDENT_1).equals("confirm")) {
@@ -177,7 +178,7 @@ public class Main {
                         List<String> notes = dataProvider.getHistoryData().getNotes();
                         if (notes.size() == 0) System.out.println("History is empty.");
                         for (int i = notes.size() - 1; i > 0 && (!argHead || i >= notes.size() - 5); i--) {
-                            System.out.println(" " + i + ": " + notes.get(i));
+                            System.out.printf(" %2d: %s%n", i, notes.get(i));
                         }
                     }
                 } catch (Exception e) {
