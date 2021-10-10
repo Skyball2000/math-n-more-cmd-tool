@@ -25,6 +25,40 @@ public abstract class CommandGenerator {
         return settingsCommand;
     }
 
+    public static ArgParser getTranslateCommand() {
+        ArgParser translateCommand = new ArgParser();
+        translateCommand.setPrefix("translate");
+        translateCommand.setPrefixRequired(true);
+        translateCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("--text", "-t")
+                        .setParameterName("text")
+                        .setRequired(true)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.STRING)
+                        .setDescription("The text to translate.")
+        );
+        translateCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("--origin", "-o")
+                        .setParameterName("language")
+                        .setRequired(true)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.STRING)
+                        .setDescription("The language to translate from ('en', 'de', ...).")
+        );
+        translateCommand.addArgument(
+                new ArgParser.Argument()
+                        .addIdentifier("--destination", "-d")
+                        .setParameterName("language")
+                        .setRequired(true)
+                        .setParameterRequired(true)
+                        .setParameterType(ArgParser.Argument.ParameterType.STRING)
+                        .setDescription("The language to translate to ('en', 'de', ...).")
+        );
+        return translateCommand;
+    }
+
     public static ArgParser getChartCommand() {
         ArgParser chartCommand = new ArgParser();
         chartCommand.setPrefix("chart");

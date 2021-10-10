@@ -1,6 +1,7 @@
 package de.yanwittmann.cmdtool;
 
 import com.fathzer.soft.javaluator.Operator;
+import de.yanwittmann.cmdtool.api.GoogleTranslate;
 import de.yanwittmann.cmdtool.chart.ChartCreator;
 import de.yanwittmann.cmdtool.data.DataProvider;
 import de.yanwittmann.cmdtool.math.ExpressionEvaluation;
@@ -33,6 +34,7 @@ public class Main {
         ArgParser mathCommand = CommandGenerator.getMathCommand();
         ArgParser notesCommand = CommandGenerator.getNotesCommand();
         ArgParser chartCommand = CommandGenerator.getChartCommand();
+        ArgParser translateCommand = CommandGenerator.getTranslateCommand();
         ArgParser historyCommand = CommandGenerator.getHistoryCommand();
         ArgParser settingsCommand = CommandGenerator.getSettingsCommand();
         ArgParser helpCommand = CommandGenerator.getHelpCommand();
@@ -58,10 +60,11 @@ public class Main {
             if (helpCommand.matches(input)) {
                 try {
                     System.out.println(settingsCommand + "\n");
-                    System.out.println(mathCommand + "\n");
-                    System.out.println(notesCommand + "\n");
                     System.out.println(historyCommand + "\n");
+                    System.out.println(translateCommand + "\n");
+                    System.out.println(notesCommand + "\n");
                     System.out.println(chartCommand + "\n");
+                    System.out.println(mathCommand + "\n");
 
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());
@@ -77,6 +80,17 @@ public class Main {
                     }
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (translateCommand.matches(input)) {
+                try {
+                    ArgParser.Results result = translateCommand.parse(input);
+
+                    GoogleTranslate translate = new GoogleTranslate();
+                    translate.setLanguages(result.getString("--origin"), result.getString("--destination"));
+                    System.out.println(translate.translate(result.getString("--text")));
+                } catch (Exception e) {
+                    System.err.println("An error occurred while translating the text: " + e.getMessage());
                     e.printStackTrace();
                 }
             } else if (chartCommand.matches(input)) {

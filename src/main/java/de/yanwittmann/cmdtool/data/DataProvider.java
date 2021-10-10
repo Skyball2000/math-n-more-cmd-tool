@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.io.*;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,5 +149,20 @@ public class DataProvider {
         outputWriter.write(text);
         outputWriter.flush();
         outputWriter.close();
+    }
+
+    public static String[] getResponseFromURL(String url) throws IOException {
+        url = url.replace(" ", "%20");
+        ArrayList<String> lines = new ArrayList<>();
+        URL urlObject = new URL(url);
+        BufferedReader read = new BufferedReader(new InputStreamReader(urlObject.openStream()));
+        String i;
+        while ((i = read.readLine()) != null)
+            lines.add(i);
+        read.close();
+        String[] result = new String[lines.size()];
+        for (int j = 0; j < lines.size(); j++)
+            result[j] = lines.get(j);
+        return result;
     }
 }
