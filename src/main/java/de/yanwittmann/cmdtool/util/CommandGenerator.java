@@ -25,6 +25,13 @@ public abstract class CommandGenerator {
         return settingsCommand;
     }
 
+    public static ArgParser getGoogleCommand() {
+        ArgParser googleCommand = new ArgParser();
+        googleCommand.setPrefix("go");
+        googleCommand.setPrefixRequired(true);
+        return googleCommand;
+    }
+
     public static ArgParser getTranslateCommand() {
         ArgParser translateCommand = new ArgParser();
         translateCommand.setPrefix("translate");

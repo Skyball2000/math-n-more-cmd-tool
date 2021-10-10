@@ -47,7 +47,41 @@ Enter one expression per line, leave empty to stop. To assign a new variable, en
  1 ║ 1 ║ 0            ║ 1
 ```
 
+Building a truth table for the expressions:
+
+- `((A AND B) OR (A AND C) OR (B AND C))`
+- `((A AND B) OR (C AND NOT (A <=> B)))`
+
+```
+> math -trb
+Enter the input variables, split by a space character:
+ > A C B
+Enter one expression per line, leave empty to stop. To assign a new variable, enter [VAR] = [EXPR]. Use [undo] and [restart] to control the input.
+ > A AND B
+ > restart
+Restarting multiline input:
+ > P = A AND B
+ > Q = A AND C
+ > R = B AND C
+ > S = NOT (A <=> B)
+ > T = C AND S
+ > f = P OR Q OR R
+ > g = P OR T
+ >
+ A ║ B ║ C ║ P = A AND B ║ Q = A AND C ║ R = B AND C ║ S =  !(A <=> B) ║ T = C AND S ║ f = P OR Q OR R ║ g = P OR T
+═══╬═══╬═══╬═════════════╬═════════════╬═════════════╬═══════════════════╬═════════════╬═════════════════╬════════════
+ 0 ║ 0 ║ 0 ║ 0           ║ 0           ║ 0           ║ 0                 ║ 0           ║ 0               ║ 0
+ 0 ║ 0 ║ 1 ║ 0           ║ 0           ║ 0           ║ 0                 ║ 0           ║ 0               ║ 0
+ 0 ║ 1 ║ 0 ║ 0           ║ 0           ║ 0           ║ 1                 ║ 0           ║ 0               ║ 0
+ 0 ║ 1 ║ 1 ║ 0           ║ 0           ║ 1           ║ 1                 ║ 1           ║ 1               ║ 1
+ 1 ║ 0 ║ 0 ║ 0           ║ 0           ║ 0           ║ 1                 ║ 0           ║ 0               ║ 0
+ 1 ║ 0 ║ 1 ║ 0           ║ 1           ║ 0           ║ 1                 ║ 1           ║ 1               ║ 1
+ 1 ║ 1 ║ 0 ║ 1           ║ 0           ║ 0           ║ 0                 ║ 0           ║ 1               ║ 1
+ 1 ║ 1 ║ 1 ║ 1           ║ 1           ║ 1           ║ 0                 ║ 0           ║ 1               ║ 1
+```
+
 ## Build the tool yourself
+
 1. Clone and install the [org.snim2 tautology-checker](https://github.com/snim2/tautology-checker) using Maven
 2. Clone and install the [steos jnafilechooser](https://github.com/steos/jnafilechooser.git) using Maven
 3. Build this project using Maven

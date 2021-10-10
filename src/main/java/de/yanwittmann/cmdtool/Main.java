@@ -12,9 +12,11 @@ import de.yanwittmann.cmdtool.util.Util;
 import org.snim2.checker.ast.Formula;
 import org.snim2.checker.parser.Parser;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Scanner;
 
@@ -89,6 +91,14 @@ public class Main {
                     GoogleTranslate translate = new GoogleTranslate();
                     translate.setLanguages(result.getString("--origin"), result.getString("--destination"));
                     System.out.println(translate.translate(result.getString("--text")));
+                } catch (Exception e) {
+                    System.err.println("An error occurred while translating the text: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            } else if (input.startsWith("go ")) {
+                try {
+                    String goTo = "www.google.com/search?q=" + input.replace("go ", "").replace(" ", "%20") + "&btnI";
+                    Desktop.getDesktop().browse(URI.create(goTo));
                 } catch (Exception e) {
                     System.err.println("An error occurred while translating the text: " + e.getMessage());
                     e.printStackTrace();
@@ -287,12 +297,14 @@ public class Main {
         for (Operator o : TreeBooleanEvaluator.OR_OPERATORS) expression = expression.replace(o.getSymbol(), or);
         for (Operator o : TreeBooleanEvaluator.AND_OPERATORS) expression = expression.replace(o.getSymbol(), and);
         for (Operator o : TreeBooleanEvaluator.EQUI_OPERATORS) expression = expression.replace(o.getSymbol(), equi);
+        expression = expression.replace(ASCII_EQUI, "ASCII_EQUI");
         for (Operator o : TreeBooleanEvaluator.IMPL_OPERATORS) expression = expression.replace(o.getSymbol(), impl);
+        expression = expression.replace("ASCII_EQUI", ASCII_EQUI);
         for (Operator o : TreeBooleanEvaluator.XOR_OPERATORS) expression = expression.replace(o.getSymbol(), xor);
-        return expression.replaceAll(" +", " ");
+        return expression.replaceAll(" +", " ").replace("! ", "!").replace("( !", "(!").trim();
     }
 
-    private final static String UNICODE_NOT = " \u00AC ";
+    private final static String UNICODE_NOT = " \u00AC";
     private final static String UNICODE_AND = " \u2227 ";
     private final static String UNICODE_OR = " \u2228 ";
     private final static String UNICODE_EQUI = " \u2194 ";
