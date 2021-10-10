@@ -19,7 +19,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    private final static String TOOL_VERSION = "1.0.2";
+    private final static String TOOL_VERSION = "1.0.3";
 
     public static void main(String[] args) {
 
@@ -57,11 +57,11 @@ public class Main {
 
             if (helpCommand.matches(input)) {
                 try {
-                    System.out.println(settingsCommand);
-                    System.out.println(mathCommand);
-                    System.out.println(notesCommand);
-                    System.out.println(historyCommand);
-                    System.out.println(chartCommand);
+                    System.out.println(settingsCommand + "\n");
+                    System.out.println(mathCommand + "\n");
+                    System.out.println(notesCommand + "\n");
+                    System.out.println(historyCommand + "\n");
+                    System.out.println(chartCommand + "\n");
 
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());
@@ -69,11 +69,11 @@ public class Main {
                 }
             } else if (settingsCommand.matches(input)) {
                 try {
-                    ArgParser.Results result = mathCommand.parse(input);
-                    boolean argUnicode = result.isPresent("unicode");
+                    ArgParser.Results result = settingsCommand.parse(input);
+                    boolean argUnicode = result.isPresent("--unicode");
 
                     if (argUnicode) {
-                        unicodeOutput = result.getBoolean("unicode");
+                        unicodeOutput = result.getBoolean("--unicode");
                     }
                 } catch (Exception e) {
                     System.err.println("An error occurred while performing the operation: " + e.getMessage());
@@ -82,22 +82,22 @@ public class Main {
             } else if (chartCommand.matches(input)) {
                 try {
                     ArgParser.Results result = chartCommand.parse(input);
-                    boolean argCsv = result.isPresent("csv");
-                    boolean argOut = result.isPresent("out");
-                    boolean argTitle = result.isPresent("title");
-                    boolean argStartAtZero = result.isPresent("startAtZero");
+                    boolean argCsv = result.isPresent("--csv");
+                    boolean argOut = result.isPresent("--out");
+                    boolean argTitle = result.isPresent("--title");
+                    boolean argStartAtZero = result.isPresent("--startAtZero");
 
                     File csvFile = null;
-                    if (argCsv) csvFile = new File(result.getString("csv"));
+                    if (argCsv) csvFile = new File(result.getString("--csv"));
                     if (csvFile == null || !csvFile.exists()) csvFile = dataProvider.pickFile("CSV", "csv");
                     if (csvFile == null || !csvFile.exists()) return;
 
                     ChartCreator chartCreator = new ChartCreator();
                     chartCreator.setCsvFile(csvFile);
-                    chartCreator.setChartType(result.getString("type"));
-                    if (argOut) chartCreator.setOutFile(new File(result.getString("out")));
-                    if (argTitle) chartCreator.setTitle(result.getString("title"));
-                    if (argStartAtZero) chartCreator.setStartAtZero(result.getBoolean("startAtZero"));
+                    chartCreator.setChartType(result.getString("--type"));
+                    if (argOut) chartCreator.setOutFile(new File(result.getString("--out")));
+                    if (argTitle) chartCreator.setTitle(result.getString("--title"));
+                    if (argStartAtZero) chartCreator.setStartAtZero(result.getBoolean("--startAtZero"));
                     chartCreator.makeChart();
                     chartCreator.writeChart();
                     chartCreator.openChart();
@@ -109,18 +109,18 @@ public class Main {
             } else if (notesCommand.matches(input)) {
                 try {
                     ArgParser.Results result = notesCommand.parse(input);
-                    boolean argAdd = result.isPresent("add");
-                    boolean argRemove = result.isPresent("remove");
-                    boolean argList = result.isPresent("list");
-                    boolean argClear = result.isPresent("clear");
+                    boolean argAdd = result.isPresent("--add");
+                    boolean argRemove = result.isPresent("--remove");
+                    boolean argList = result.isPresent("--list");
+                    boolean argClear = result.isPresent("--clear");
 
                     if (argAdd) {
-                        String noteText = result.getString("add");
+                        String noteText = result.getString("--add");
                         int noteIndex = dataProvider.getNotesData().addNote(noteText);
                         System.out.println("Created note with index " + noteIndex);
                         dataProvider.save();
                     } else if (argRemove) {
-                        int noteIndex = result.getInt("remove");
+                        int noteIndex = result.getInt("--remove");
                         dataProvider.getNotesData().removeNote(noteIndex);
                         System.out.println("Removed note with index " + noteIndex);
                         dataProvider.save();
@@ -142,8 +142,8 @@ public class Main {
             } else if (historyCommand.matches(input)) {
                 try {
                     ArgParser.Results result = historyCommand.parse(input);
-                    boolean argClear = result.isPresent("clear");
-                    boolean argHead = result.isPresent("head");
+                    boolean argClear = result.isPresent("--clear");
+                    boolean argHead = result.isPresent("--head");
 
                     if (argClear) {
                         dataProvider.getHistoryData().clearNotes();
@@ -164,17 +164,17 @@ public class Main {
                 try {
                     ArgParser.Results result = mathCommand.parse(input);
 
-                    boolean argTautologie = result.isPresent("tautologie");
-                    boolean argTruth = result.isPresent("truth");
-                    boolean argTruthBuilder = result.isPresent("truthbuilder");
-                    boolean argVariables = result.isPresent("variables");
-                    boolean argEquals = result.isPresent("equals");
+                    boolean argTautologie = result.isPresent("--tautologie");
+                    boolean argTruth = result.isPresent("--truth");
+                    boolean argTruthBuilder = result.isPresent("--truthbuilder");
+                    boolean argVariables = result.isPresent("--variables");
+                    boolean argEquals = result.isPresent("--equals");
                     boolean argP1 = result.isPresent("-p1");
                     boolean argP2 = result.isPresent("-p2");
 
                     if (argTautologie) {
                         InputStream inputStream = new ByteArrayInputStream(
-                                result.getString("tautologie")
+                                result.getString("--tautologie")
                                         .replace("1", "TT")
                                         .replace("0", "FF")
                                         .getBytes()
@@ -196,8 +196,8 @@ public class Main {
                         System.out.println();
 
                     } else if (argTruth) {
-                        System.out.println(normalizeExpressionOutput(result.getString("truth")));
-                        System.out.println(ExpressionEvaluation.generateTruthTable(result.getString("truth")));
+                        System.out.println(normalizeExpressionOutput(result.getString("--truth")));
+                        System.out.println(ExpressionEvaluation.generateTruthTable(result.getString("--truth")));
 
                     } else if (argTruthBuilder) {
                         System.out.println("Enter the input variables, split by a space character:");
@@ -207,8 +207,8 @@ public class Main {
                         System.out.println(ExpressionEvaluation.buildTruthTableFromMultipleExpressions(variables, expressions));
 
                     } else if (argVariables) {
-                        System.out.println(normalizeExpressionOutput(result.getString("variables")));
-                        System.out.println(ExpressionEvaluation.extractVariables(result.getString("variables")));
+                        System.out.println(normalizeExpressionOutput(result.getString("--variables")));
+                        System.out.println(ExpressionEvaluation.extractVariables(result.getString("--variables")));
 
                     } else if (argEquals && argP1 && argP2) {
                         String result1 = ExpressionEvaluation.generateTruthTable(result.getString("-p1"));

@@ -49,4 +49,5 @@ Enter one expression per line, leave empty to stop. To assign a new variable, en
 
 ## Build the tool yourself
 1. Clone and install the [org.snim2 tautology-checker](https://github.com/snim2/tautology-checker) using Maven
-2. Build this project using Maven
+2. Clone and install the [steos jnafilechooser](https://github.com/steos/jnafilechooser.git) using Maven
+3. Build this project using Maven

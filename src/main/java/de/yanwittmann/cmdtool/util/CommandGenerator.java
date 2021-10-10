@@ -15,7 +15,7 @@ public abstract class CommandGenerator {
         settingsCommand.setPrefixRequired(true);
         settingsCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("unicode")
+                        .addIdentifier("--unicode")
                         .setParameterName("active")
                         .setRequired(false)
                         .setParameterRequired(true)
@@ -31,7 +31,7 @@ public abstract class CommandGenerator {
         chartCommand.setPrefixRequired(true);
         chartCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("csv", "c")
+                        .addIdentifier("-csv", "-c")
                         .setRequired(false)
                         .setParameterRequired(true)
                         .setParameterType(ArgParser.Argument.ParameterType.STRING)
@@ -39,7 +39,7 @@ public abstract class CommandGenerator {
         );
         chartCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("out", "o")
+                        .addIdentifier("-out", "-o")
                         .setRequired(false)
                         .setParameterRequired(true)
                         .setParameterType(ArgParser.Argument.ParameterType.STRING)
@@ -47,7 +47,7 @@ public abstract class CommandGenerator {
         );
         chartCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("type", "t")
+                        .addIdentifier("--type", "-t")
                         .setRequired(true)
                         .setParameterRequired(true)
                         .setParameterType(ArgParser.Argument.ParameterType.STRING)
@@ -56,7 +56,7 @@ public abstract class CommandGenerator {
         );
         chartCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("title")
+                        .addIdentifier("--title", "-ti")
                         .setRequired(false)
                         .setParameterRequired(true)
                         .setParameterType(ArgParser.Argument.ParameterType.STRING)
@@ -64,7 +64,7 @@ public abstract class CommandGenerator {
         );
         chartCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("startAtZero", "zero")
+                        .addIdentifier("--startAtZero", "-zero")
                         .setRequired(false)
                         .setParameterRequired(true)
                         .setParameterType(ArgParser.Argument.ParameterType.BOOLEAN)
@@ -79,13 +79,13 @@ public abstract class CommandGenerator {
         historyCommand.setPrefixRequired(true);
         historyCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("clear", "c")
+                        .addIdentifier("--clear", "-c")
                         .setRequired(false)
                         .setDescription("Clears the history.")
         );
         historyCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("head", "h")
+                        .addIdentifier("--head", "-h")
                         .setRequired(false)
                         .setDescription("Will only print the most recent entries.")
         );
@@ -98,7 +98,7 @@ public abstract class CommandGenerator {
         notesCommand.setPrefixRequired(true);
         notesCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("add", "a")
+                        .addIdentifier("--add", "-a")
                         .setParameterName("note")
                         .setRequired(false)
                         .setParameterRequired(true)
@@ -107,7 +107,7 @@ public abstract class CommandGenerator {
         );
         notesCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("remove", "r")
+                        .addIdentifier("--remove", "-r")
                         .setParameterName("note")
                         .setRequired(false)
                         .setParameterRequired(true)
@@ -116,13 +116,13 @@ public abstract class CommandGenerator {
         );
         notesCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("list", "l")
+                        .addIdentifier("--list", "-l")
                         .setRequired(false)
                         .setDescription("Lists all notes.")
         );
         notesCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("clear", "c")
+                        .addIdentifier("--clear", "-c")
                         .setRequired(false)
                         .setDescription("Clears all notes.")
         );
@@ -135,7 +135,7 @@ public abstract class CommandGenerator {
         mathCommand.setPrefixRequired(true);
         mathCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("tautologie", "ta")
+                        .addIdentifier("--tautologie", "-ta")
                         .setParameterName("expression")
                         .setRequired(false)
                         .setParameterRequired(true)
@@ -144,7 +144,7 @@ public abstract class CommandGenerator {
         );
         mathCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("truth", "tr")
+                        .addIdentifier("--truth", "-tr")
                         .setParameterName("expression")
                         .setRequired(false)
                         .setParameterRequired(true)
@@ -153,14 +153,14 @@ public abstract class CommandGenerator {
         );
         mathCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("truthbuilder", "trb")
+                        .addIdentifier("--truthbuilder", "-trb")
                         .setParameterName("expression")
                         .setRequired(false)
                         .setDescription("Build yourself a truth table from several expressions.")
         );
         mathCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("variables", "va")
+                        .addIdentifier("--variables", "-va")
                         .setParameterName("expression")
                         .setRequired(false)
                         .setParameterRequired(true)
@@ -169,7 +169,7 @@ public abstract class CommandGenerator {
         );
         mathCommand.addArgument(
                 new ArgParser.Argument()
-                        .addIdentifier("equals", "eq")
+                        .addIdentifier("--equals", "-eq")
                         .setParameterName("expression")
                         .setRequired(false)
                         .setParameterRequired(false)
