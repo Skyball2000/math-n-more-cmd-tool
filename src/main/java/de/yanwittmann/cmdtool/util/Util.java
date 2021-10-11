@@ -84,7 +84,7 @@ public abstract class Util {
         return input;
     }
 
-    public static List<String> multiCmdInput(Scanner scanner) {
+    public static List<String> multiCmdInput(Scanner scanner, MultilineInputListener listener) {
         List<String> inputs = new ArrayList<>();
         while (true) {
             String input = Util.askForInput(scanner, INPUT_INDENT_1);
@@ -95,13 +95,18 @@ public abstract class Util {
                 inputs.clear();
                 continue;
             } else if (input.equals("undo") || input.equals("remove line") || input.equals("repeat line") || input.equals("again line")) {
-                System.out.println("Removed last line from the input.");
+                System.out.println("Removed last line from the input: " + inputs.get(inputs.size() - 1));
                 inputs.remove(inputs.size() - 1);
                 continue;
             }
             inputs.add(input);
+            listener.input(inputs);
         }
         return inputs;
+    }
+
+    public static List<String> multiCmdInput(Scanner scanner) {
+        return multiCmdInput(scanner, null);
     }
 
     private static InputListener inputListener;
@@ -112,5 +117,9 @@ public abstract class Util {
 
     public interface InputListener {
         void input(String input);
+    }
+
+    public interface MultilineInputListener {
+        void input(List<String> input);
     }
 }

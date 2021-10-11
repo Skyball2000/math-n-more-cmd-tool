@@ -228,7 +228,13 @@ public class Main {
                         System.out.println("Enter the input variables, split by a space character:");
                         List<String> variables = ExpressionEvaluation.extractVariables(Util.askForInput(scanner, Util.INPUT_INDENT_1));
                         System.out.println("Enter one expression per line, leave empty to stop. To assign a new variable, enter [VAR] = [EXPR]. Use [undo] and [restart] to control the input.");
-                        List<String> expressions = Util.multiCmdInput(scanner);
+                        List<String> expressions = Util.multiCmdInput(scanner, input1 -> {
+                            try {
+                                ExpressionEvaluation.buildTruthTableFromMultipleExpressions(variables, input1);
+                            } catch (Exception e) {
+                                System.out.println("Input error: " + e.getMessage());
+                            }
+                        });
                         System.out.println(ExpressionEvaluation.buildTruthTableFromMultipleExpressions(variables, expressions));
 
                     } else if (argVariables) {

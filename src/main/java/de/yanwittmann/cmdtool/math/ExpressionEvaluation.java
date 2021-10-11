@@ -40,7 +40,7 @@ public abstract class ExpressionEvaluation {
         // extract assignments from expressions
         Map<String, String> expressionsWithAssignment = new LinkedHashMap<>();
         for (String expression : expressions) {
-            Matcher matcher = Pattern.compile("([a-zA-Z0-9]+) ?= ?(.+)").matcher(expression.replace("=>", " => "));
+            Matcher matcher = Pattern.compile("([a-zA-Z0-9]+) ?= ?(.+)").matcher(expression.replaceAll("(?<!<)=>", " => "));
             if (matcher.find()) {
                 expressionsWithAssignment.put(matcher.group(1), matcher.group(2));
             } else {
